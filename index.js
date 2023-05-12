@@ -71,6 +71,20 @@ async function run() {
             res.send(result);
         })
 
+        //read a specific users appointment
+        app.get('/appointment', async(req,res)=>{
+            const user = req.query;
+            console.log(user);
+             let query = {}
+            if(req.query?.email){
+                query = {email: req.query.email};
+            }
+
+            const result = await appointmentCollection.find(query).toArray();
+            res.send(result);
+
+        })
+
 
 
         // Send a ping to confirm a successful connection
