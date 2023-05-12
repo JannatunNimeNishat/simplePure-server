@@ -31,11 +31,23 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    //
+    const servicesCollection = client.db('smilePureDB').collection('services')
+
 
     //CRUD
     
     //read
-    
+    app.get('/services', async(req,res)=>{
+
+      /*   const option = { 
+            projection: {service_name:1,img:1,details:1 }
+        } */
+        const cursors =  servicesCollection.find()
+        const result = await cursors.toArray();
+        console.log(result);
+        res.send(result);
+    })
 
 
 
