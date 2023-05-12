@@ -31,12 +31,13 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-        //
+        // services
         const servicesCollection = client.db('smilePureDB').collection('services')
+        // appointment
+        const appointmentCollection = client.db('smilePureDB').collection('appointment')
 
-
-        //CRUD
-
+                      //CRUD for services
+ 
         //read
         app.get('/services', async (req, res) => {
 
@@ -61,6 +62,15 @@ async function run() {
             const result = await servicesCollection.findOne(query,option)
             res.send(result);
         })
+
+            //CRUD Appointment
+        //create
+        app.post('/appointment', async(req,res)=>{
+            const newAppointment = req.body;
+            const result = await appointmentCollection.insertOne(newAppointment);
+            res.send(result);
+        })
+
 
 
         // Send a ping to confirm a successful connection
