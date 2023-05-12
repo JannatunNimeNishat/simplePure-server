@@ -73,8 +73,7 @@ async function run() {
 
         //read a specific users appointment
         app.get('/appointment', async(req,res)=>{
-            const user = req.query;
-            console.log(user);
+           
              let query = {}
             if(req.query?.email){
                 query = {email: req.query.email};
@@ -85,7 +84,13 @@ async function run() {
 
         })
 
-
+        //delete a appointment
+        app.delete('/appointment/:id', async(req,res)=>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await appointmentCollection.deleteOne(query);
+            res.send(result);
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
