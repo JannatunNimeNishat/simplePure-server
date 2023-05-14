@@ -16,6 +16,12 @@ require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oth2isl.mongodb.net/?retryWrites=true&w=majority`;
 
+//jwt
+const jwt = require('jsonwebtoken');
+
+
+
+
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -31,10 +37,24 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
+
         // services
         const servicesCollection = client.db('smilePureDB').collection('services')
         // appointment
         const appointmentCollection = client.db('smilePureDB').collection('appointment')
+
+
+                // jwt 
+        //jwt token create for every valid user after login
+        app.post('/jwt', (req,res)=>{
+            // console.log('inside jwt');
+            const user = req.body;
+            const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1h'})
+            // console.log(token);
+            res.send({token});
+        })
+
+
 
                       //CRUD for services
  
@@ -57,7 +77,7 @@ async function run() {
             console.log(id);
             const query = { _id: new ObjectId(id) }
             const option = {
-                projection: {doctor_name: 1,doctor_img: 1, details: 1,price: 1, service_name:1}
+                projection: {doctor_name: 1,doctor_img: 1, details: 1,price: 1, service_name:1,img:1}
             }
             const result = await servicesCollection.findOne(query,option)
             res.send(result);
@@ -71,8 +91,8 @@ async function run() {
             res.send(result);
         })
 
-        //read a specific users appointment
-        app.get('/appointment', async(req,res)=>{
+        //read a specific users appointments
+        app.get('/appointments', async(req,res)=>{
            
              let query = {}
             if(req.query?.email){
@@ -85,7 +105,7 @@ async function run() {
         })
 
         //delete a appointment
-        app.delete('/appointment/:id', async(req,res)=>{
+        app.delete('/appointments/:id', async(req,res)=>{
             const id = req.params.id;
             const query = {_id: new ObjectId(id)}
             const result = await appointmentCollection.deleteOne(query);
